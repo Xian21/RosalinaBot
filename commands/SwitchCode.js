@@ -1,16 +1,16 @@
 const Command = require('./Command.js');
-const UpdateSwitchCodes = require('../cloudwatch/UpdateSwitchCodes.js');
+const UpdateFriendCodes = require('../cloudwatch/UpdateFriendCodes.js');
 
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const url = 'mongodb://localhost:27017';
 
-// Example: r!switchCode
-// Example: r!switchCode @USER
-// Example: r!switchCode clear
-// Example: r!switchCode SW-XXXX-XXXX-XXXX
+// Example: h!friendCode
+// Example: h!friendCode @USER
+// Example: h!friendCode clear
+// Example: h!friendCode XXXX-XXXX-XXXX
 
-class SwitchCode extends Command {
+class FriendCode extends Command {
   constructor(msg) {
     super(msg);
     try {
@@ -28,7 +28,7 @@ class SwitchCode extends Command {
           if (results == null) {
             db.collection('users').insertOne({
               _id: msg.author.id,
-              switchCode: argument.toUpperCase(),
+              friendCode: argument.toUpperCase(),
               dsCode: "-1",
               switchPrivacy: "PRIVATE",
               dsPrivacy: "PRIVATE",
@@ -51,7 +51,7 @@ class SwitchCode extends Command {
               "_id": msg.author.id
             }, {
               $set: {
-                "switchCode": argument.toUpperCase()
+                "friendCode": argument.toUpperCase()
               }
             });
           }
@@ -63,14 +63,14 @@ class SwitchCode extends Command {
                 name: "Code Saved!",
                 icon_url: msg.author.avatarURL
               },
-              title: "Nintendo Switch Code",
+              title: "Nintendo Wii Friend Code",
               description: argument.toUpperCase(),
               footer: {
                 text: "Type 'r!help settings' for information about privacy settings."
               }
             }
           });
-          console.log(`✅ Nintendo Switch Code saved for ` + msg.author.username);
+          console.log(`✅ Nintendo Wii Friend Code saved for ` + msg.author.username);
         });
       })
     } else if (argument.startsWith("<@!") && argument.endsWith(">")) {
@@ -80,7 +80,7 @@ class SwitchCode extends Command {
         db.collection('users').findOne({
           "_id": extractedID
         }, function(err, results) {
-          if (results == null || results.switchCode == "-1") {
+          if (results == null || results.friendCode == "-1") {
             msg.channel.send({
               embed: {
                 color: 0x86D0CF,
@@ -88,10 +88,10 @@ class SwitchCode extends Command {
                   name: msg.guild.members.get(extractedID).user.username,
                   icon_url: msg.guild.members.get(extractedID).user.avatarURL
                 },
-                title: "Nintendo Switch Code",
+                title: "Nintendo Wii Friend Code",
                 description: "This user has not entered their code.",
                 footer: {
-                  text: "They must set it up with `r!switchcode SW-XXXX-XXXX-XXXX`"
+                  text: "They must set it up with `h!friendcode XXXX-XXXX-XXXX`"
                 }
               }
             });
@@ -104,8 +104,8 @@ class SwitchCode extends Command {
                     name: msg.guild.members.get(extractedID).user.username,
                     icon_url: msg.guild.members.get(extractedID).user.avatarURL
                   },
-                  title: "Nintendo Switch Code",
-                  description: results.switchCode
+                  title: "Nintendo Wii Friend Code",
+                  description: results.friendCode
                 }
               });
             } else {
@@ -116,7 +116,7 @@ class SwitchCode extends Command {
                     name: msg.guild.members.get(extractedID).user.username,
                     icon_url: msg.guild.members.get(extractedID).user.avatarURL
                   },
-                  title: "Nintendo Switch Code",
+                  title: "Nintendo Wii Friend Code",
                   description: "This code has been kept private",
                   footer: {
                     text: "Privacy settings can be managed through r!settings"
@@ -135,11 +135,11 @@ class SwitchCode extends Command {
           "_id": msg.author.id
         }, {
           $set: {
-            "switchCode": "-1"
+            "friendCode": "-1"
           }
         });
         client.close();
-        msg.reply("Your Nintendo Switch friend code has been removed from my knowledge.");
+        msg.reply("Your Nintendo Wii Friend friend code has been removed from my knowledge.");
       });
     } else if (argument == "") {
       MongoClient.connect(url, function(err, client) {
@@ -148,7 +148,7 @@ class SwitchCode extends Command {
         db.collection('users').findOne({
           "_id": msg.author.id
         }, function(err, results) {
-          if (results == null || results.switchCode == "-1") {
+          if (results == null || results.friendCode == "-1") {
             msg.channel.send({
               embed: {
                 color: 0x86D0CF,
@@ -156,10 +156,10 @@ class SwitchCode extends Command {
                   name: msg.author.username,
                   icon_url: msg.author.avatarURL
                 },
-                title: "Nintendo Switch Code",
+                title: "Nintendo Wii Friend Code",
                 description: "You have not entered a code.",
                 footer: {
-                  text: "You can set it up with `r!switchcode SW-XXXX-XXXX-XXXX`"
+                  text: "You can set it up with `h!friendcode XXXX-XXXX-XXXX`"
                 }
               }
             });
@@ -171,10 +171,10 @@ class SwitchCode extends Command {
                   name: msg.author.username,
                   icon_url: msg.author.avatarURL
                 },
-                title: "Nintendo Switch Code",
-                description: results.switchCode,
+                title: "Nintendo Wii Friend Code",
+                description: results.friendCode,
                 footer: {
-                  text: "Privacy settings can be managed through r!settings"
+                  text: "Privacy settings can be managed through h!settings"
                 }
               }
             });
@@ -185,7 +185,7 @@ class SwitchCode extends Command {
     } else {
       msg.channel.send(":x: Invalid usage!");
     }
-    new UpdateSwitchCodes();
+    new UpdateFriendCodes();
   }
 }
 
@@ -227,4 +227,4 @@ function validateCode(code) {
   }
 }
 
-module.exports = SwitchCode;
+module.exports = FriendCode;
