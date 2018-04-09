@@ -7,7 +7,7 @@ var cw = new AWS.CloudWatch({
   apiVersion: '2010-08-01'
 });
 
-class UpdateSwitchCodes {
+class UpdateFriendCodes {
   constructor() {
     var num;
     MongoClient.connect(url, function(err, client) {
@@ -21,7 +21,7 @@ class UpdateSwitchCodes {
         client.close();
         var params = {
           MetricData: [{
-            MetricName: 'Nintendo Switch Codes Managed',
+            MetricName: 'Nintendo Wii Friend Codes Managed',
             Dimensions: [{
               Name: 'Statistics',
               Value: 'Codes'
@@ -29,14 +29,14 @@ class UpdateSwitchCodes {
             Unit: 'None',
             Value: num
           }, ],
-          Namespace: 'RosalinaBot'
+          Namespace: 'HyperMarioBot'
         };
 
         cw.putMetricData(params, function(err, data) {
           if (err) {
             console.log("⛈  CloudWatch Put Error: ", err);
           } else {
-            console.log("☁️  Put " + num + " Nintendo Switch friend codes to CloudWatch");
+            console.log("☁️  Put " + num + " Nintendo Wii friend codes to CloudWatch");
           }
         });
       });
@@ -44,4 +44,4 @@ class UpdateSwitchCodes {
   }
 }
 
-module.exports = UpdateSwitchCodes;
+module.exports = UpdateFriendCodes;
